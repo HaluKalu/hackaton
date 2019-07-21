@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Пилот</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+    crossorigin="anonymous">
+</head>
+
+<body>
+  
+  <div class="container">
+    <p class="h3">Пилот</p>
+    <div class="form-group">
+      <label for="number"> Number Test</label>
+      <input type="text" class="form-control" name="number" id="number" placeholder="number">
+    </div>
+    <button type="button" onclick="number()" class="btn  btn-outline-dark">Check</button>
+    <div class="form-group">
+      <label for="code"> Code Test</label>
+      <input type="text" class="form-control" name="code" id="code" placeholder="code">
+    </div>
+
+    <button type="button" onclick="code()" class="btn  btn-outline-dark">Check</button>
+
+    <div class="form-group">
+      <input type="text" class="form-control" name="f_name" id="f_name" placeholder="F_name" value="F_name">
+    </div>
+    <div class="form-group">
+      <input type="text" class="form-control" name="s_name" id="s_name" placeholder="s_name" value="s_name">
+    </div>
+    <div class="form-group">
+      <input type="text" class="form-control" name="t_name" id="t_name" placeholder="t_name" value="t_name">
+    </div>
+
+    <button type="button" onclick="fio()" class="btn  btn-outline-dark">Check</button>
+    <hr>
+    <hr>
+    <hr>
+    <div class="form-group">
+      <input type="text" class="form-control" name="lat" id="lat" placeholder="lat">
+    </div>
+    <div class="form-group">
+      <input type="text" class="form-control" name="lon" id="lon" placeholder="lon">
+    </div>
+    <div class="form-group">
+      <input type="text" class="form-control" name="name" id="name" placeholder="name">
+    </div>
+    <div class="form-group">
+      <input type="text" class="form-control" name="discr" id="discr" placeholder="discr">
+    </div>
+    <div class="form-group">
+      <input type="text" class="form-control" name="type" id="type" placeholder="type">
+    </div>
+    <button type="button" onclick="problem()" class="btn  btn-outline-dark">Check</button>
+    <!-- <div class="form-group">
+        <label for="photo"></label>
+        <input type="file" class="form-control-file" name="photo" id="photo">
+      </div> -->
+
+    <hr>
+    <button type="button" onclick="get_problems()" class="btn  btn-outline-dark">Get problems</button>
+
+    <hr>
+
+    <button type="button" onclick="getprofile()" class="btn  btn-outline-dark">getprofile</button>
+
+  </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script>
+    function number() {
+      $.get('/reg/phone?phone=' + $('#number').val(), (data, txt, jxhr) => {
+        console.log(data);
+      });
+    }
+    function code() {
+      $.get('/reg/verify?code=' + $('#code').val() + '&number=' + $('#number').val(), (data, txt, jxhr) => {
+        console.log(data);
+      });
+    }
+    function fio() {
+      $.get('/add/fio?number=' + $('#number').val() + '&f_name=' + $('#f_name').val() + '&s_name=' + $('#s_name').val() + '&t_name=' + $('#t_name').val(), (data, txt, jxhr) => {
+        console.log(data);
+      });
+    }
+    function problem() {
+      console.log($('#lat').val())
+      $.get('/create_problem?number=' + $('#number').val() + '&lat=' + $('#lat').val() + '&lon=' + $('#lon').val() + '&name=' + $('#name').val() + '&discr=' + $('#discr').val() + '&type=' + $('#type').val(), (data, txt, jxhr) => {
+        console.log(data);
+      });
+    }
+    function get_problems() {
+      $.get('/take_all_points', (data, txt, jqxhr) => {
+        console.log(data);
+      });
+    }
+    function getprofile() {
+      $.get('/take_profile/' + $('#number').val(), (data, txt, jqxhr) => {
+        console.log(data);
+        var problems = data.problems;
+        problems.forEach(function (item) {
+          $.get('/take_point/' + item, (dat, txt, jqxhr) => {
+            console.log(dat);
+          });
+        })
+      });
+    }
+
+  </script>
+</body>
+
+</html>

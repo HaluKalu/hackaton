@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Пилот</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+    crossorigin="anonymous">
+  <style>
+    /* Always set the map height explicitly to define the size of the div
+         * element that contains the map. */
+
+    #map {
+      height: 100%;
+    }
+
+    /* Optional: Makes the sample page fill the window. */
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    #fill {
+      z-index: 1000;
+      background-color: white;
+      height: 100vh;
+      width: 100vw;
+      position: absolute;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script>
+    var map;
+    function initMap() {
+      map = new google.maps.Map(
+        document.getElementById('map'),
+        { center: new google.maps.LatLng(48.712800, 44.526709), zoom: 15 });
+
+      $.get('/take_all_points', (data, err, jqxhr) => {
+        console.log(data);
+        var contStr = [];
+        if (data.length > 0) {
+          for (i = 0; i < data.length; i++) {
+            contStr.push("<h1 id='name'>" + data[i].name + "</h1>" +
+              "<p class='h5'>" + data[i].discr + "</p>");
+            var point = new google.maps.LatLng(data[i].lat, data[i].lon);
+            var icon = {
+              url: "", // url
+              scaledSize: new google.maps.Size(25, 25), // scaled size
+              origin: new google.maps.Point(0, 0), // origin
+              anchor: new google.maps.Point(10, 10) // anchor
+            };
+            var circle = new google.maps.Circle({
+							strokeColor: '#AF0000',
+							strokeOpacity: 0.1,
+							strokeWeight: 1,
+							fillColor: '#FA0000',
+							fillOpacity: 0.175,
+							map: map,
+							center: {lat: data[i].lat, lng: data[i].lon},
+							radius: 190
+						});
+            icon.url = "./images/car_test.png";
+            // console.log(data[i].type);
+            if (data[i].type.toLowerCase() == "дыра") {
+              icon.url = "./images/mark_test.png"
+            }
+            
+            var marker = new google.maps.Marker({
+              position: point,
+              icon: icon,
+              map: map
+              // shadow: pinShadow
+            });
+
+            var infowindow = new google.maps.InfoWindow();
+            google.maps.event.addListener(marker, 'click', (function (marker, i) {
+              return function () {
+                infowindow.setContent(contStr[i]);
+                infowindow.open(map, marker);
+              }
+            })(marker, i));
+          }
+        }
+      });
+    }
+  </script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAPnH8mcza_4bepKeNRWxTR_02l-PB6bhw&callback=initMap">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+
+</body>
+
+</html>
